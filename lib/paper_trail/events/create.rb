@@ -13,7 +13,8 @@ module PaperTrail
       # @api private
       def data
         data = {
-          item: @record,
+          item_id: @record.id,
+          item_type: @record.class.base_class.name,
           event: @record.paper_trail_event || "create",
           whodunnit: PaperTrail.request.whodunnit
         }
