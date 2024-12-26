@@ -24,8 +24,24 @@ module PaperTrail
       #
       # @api private
       def data
+        # YOLO support for google spanner
+        id = if @record.id.is_a?(StringIO)
+               @record.id.rewind
+               @record.id.read
+             elsif @record.id.is_a?(Array)
+               @record.id.map do |item|
+                 if item.is_a?(StringIO)
+                   item.rewind
+                   item.read
+                 else
+                   item
+                 end
+               end
+             else
+               @record.id
+             end
         data = {
-          item_id: @record.id,
+          item_id: id,
           item_type: @record.class.base_class.name,
           event: @record.paper_trail_event || "update",
           whodunnit: PaperTrail.request.whodunnit
